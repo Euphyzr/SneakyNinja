@@ -103,8 +103,8 @@ class Info(commands.Cog):
         tc, vc, cat = len(guild.text_channels), len(guild.voice_channels), len(guild.categories) 
 
         e = discord.Embed(colour=self.bot.colour, description=guild.description)
-        e.set_author(name=guild.name, url=guild.icon_url)
-        e.set_thumbnail(url=guild.icon_url)
+        e.set_author(name=guild.name, url=guild.icon_url_as(static_format='png'))
+        e.set_thumbnail(url=guild.icon_url_as(static_format='png'))
         e.add_field(name="ID", value=guild.id, inline=True)
         e.add_field(name="Region", value=guild.region, inline=True)
         e.add_field(name="Verification", value=guild.verification_level, inline=True)
