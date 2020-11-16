@@ -29,8 +29,8 @@ class Info(commands.Cog):
         """
         user = user or ctx.author
         e = discord.Embed(colour=user.colour)
-        e.set_author(name=str(user), url=user.avatar_url)
-        e.set_image(url=user.avatar_url)
+        e.set_author(name=str(user), url=user.avatar_url_as(static_format='png'))
+        e.set_image(url=user.avatar_url_as(static_format='png'))
         await ctx.send(embed=e)
 
     @commands.command()
@@ -54,7 +54,7 @@ class Info(commands.Cog):
             colour=self.bot.colour, timestamp=self.bot.timenow()
         )
         e.set_author(name=str(owner), icon_url=owner.avatar_url)
-        e.set_thumbnail(url=bot_user.avatar_url)
+        e.set_thumbnail(url=bot_user.avatar_url_as(static_format='png'))
         e.add_field(
             name="Statistics",
             value=f"members: {member_count}\nunique: {unique_member_count}\nguilds: {len(self.bot.guilds)}"
@@ -84,8 +84,8 @@ class Info(commands.Cog):
             joined, roles, user_nick = None, None, None
 
         e = discord.Embed(colour=user.colour)
-        e.set_author(name=str(user), url=user.avatar_url)
-        e.set_thumbnail(url=user.avatar_url)
+        e.set_author(name=str(user), url=user.avatar_url_as(static_format='png'))
+        e.set_thumbnail(url=user.avatar_url_as(static_format='png'))
         e.add_field(name="ID", value=user.id)
         e.add_field(name="nickname", value=user_nick)
         e.add_field(name="shared", value=shared)
