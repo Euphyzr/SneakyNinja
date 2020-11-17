@@ -62,12 +62,22 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
         _globals.update(globals())
         execcode = f'async def func():\n{textwrap.indent(code, "    ")}'
 
+        async def on_error(excep):
+            value = "".join(traceback.format_exception(type(e), e, e.__traceback__))
+            await ctx.author.send(f"```py\n{value}```")
+            await ctx.message.add_reaction(self._emoji['failed'])
+
         iseval = False
         if len(code.split('\n')) == 1:
             try:
                 compiled = compile(code, '<pyrun>', mode='eval') 
             except SyntaxError:
-                compiled = compile(execcode, '<pyrun>', mode='exec')
+                try:
+                    compiled = compile(execcode, '<pyrun>', mode='exec')
+                except Exception as e:
+                    return await on_error(e)
+            except Exception as e:
+                return await on_error(e)
             else:
                 iseval = True
         else:
@@ -80,9 +90,7 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
                     self._last_result = value
                     await ctx.send(value)
             except Exception as e:
-                value = "".join(traceback.format_exception(type(e), e, e.__traceback__))
-                await ctx.author.send(f"```py\n{value}```")
-                await ctx.message.add_reaction(self._emoji['failed'])
+                await on_error(e)
             else:
                 await ctx.message.add_reaction(self._emoji['success'])
             finally:
@@ -97,9 +105,7 @@ class Admin(commands.Cog, command_attrs=dict(hidden=True)):
         try:
             result = await func()
         except Exception as e:
-            tb = "".join(traceback.format_exception(type(e), e, e.__traceback__))
-            await ctx.author.send(f"```py\n{tb}```")
-            await ctx.message.add_reaction(self._emoji['failed'])
+            await on_error(e)
         else:
             if result:
                 await ctx.send(result)
