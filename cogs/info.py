@@ -39,7 +39,7 @@ class Info(commands.Cog):
 
         bot_user = self.bot.user
         source = "[sneaky source code](https://github.com/euphonicazure/SneakyNinja)"
-        owner = await self.bot.fetch_user(self.bot.owner_id)
+        owner = self.bot.get_user(self.bot.owner_id)
         py_ver = sys.version.split()[0]
         dpy_ver = discord.__version__
         dpy_logo = ('https://cdn.discordapp.com/attachments/336642776609456130/'
