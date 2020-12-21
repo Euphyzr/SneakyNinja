@@ -93,7 +93,7 @@ class SneakyNinja(commands.Bot):
 
     async def send_owner(self, msg, **kwargs):
         owner = self.get_user(self.owner_id)
-        await ctx.owner.send(msg, **kwargs)
+        await owner.send(msg, **kwargs)
 
 
 bot = SneakyNinja()

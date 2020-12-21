@@ -30,7 +30,7 @@ class Manage(commands.Cog):
         """
 
         args = flags.args
-        e = discord.Embed(timestamp=self.bot.timenow())
+        e = discord.Embed(timestamp=ctx.timenow())
         e.set_author(name=str(ctx.author), icon_url=ctx.author.avatar_url)
 
         if args.title:

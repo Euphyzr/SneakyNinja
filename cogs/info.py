@@ -51,7 +51,7 @@ class Info(commands.Cog):
 
         e = discord.Embed(
             title=bot_user.name, description=self.bot.description,
-            colour=self.bot.colour, timestamp=self.bot.timenow()
+            colour=self.bot.colour, timestamp=ctx.timenow()
         )
         e.set_author(name=str(owner), icon_url=owner.avatar_url)
         e.set_thumbnail(url=bot_user.avatar_url_as(static_format='png'))
@@ -59,7 +59,7 @@ class Info(commands.Cog):
             name="Statistics",
             value=f"members: {member_count}\nunique: {unique_member_count}\nguilds: {len(self.bot.guilds)}"
         )
-        e.add_field(name="Created at", value=bot_user.created_at.strftime(self.bot.time_format))
+        e.add_field(name="Created at", value=bot_user.created_at.strftime(ctx.tformat))
         e.add_field(name="Source", value=source)
         e.set_footer(text=f"Python {py_ver} | discord.py {dpy_ver}", icon_url=dpy_logo)
 
@@ -74,11 +74,11 @@ class Info(commands.Cog):
         """
 
         user = user or ctx.author
-        created = user.created_at.strftime(self.bot.time_format)
+        created = user.created_at.strftime(ctx.tformat)
         shared = sum(g.get_member(user.id) is not None for g in self.bot.guilds)
         try:
             user_nick = user.nick
-            joined = user.joined_at.strftime(self.bot.time_format)
+            joined = user.joined_at.strftime(ctx.tformattime_format)
             roles = ", ".join([role.mention for role in reversed(user.roles)])
         except AttributeError:
             joined, roles, user_nick = None, None, None
@@ -109,7 +109,7 @@ class Info(commands.Cog):
         e.add_field(name="Region", value=guild.region, inline=True)
         e.add_field(name="Verification", value=guild.verification_level, inline=True)
         e.add_field(name="Members", value=f"{guild.member_count} ({bot_count} bot)", inline=True)
-        e.add_field(name="Created", value=guild.created_at.strftime(self.bot.time_format), inline=True)
+        e.add_field(name="Created", value=guild.created_at.strftime(ctx.tformat), inline=True)
         e.add_field(name="Nitro", value=f"lvl: {guild.premium_tier} & user: {guild.premium_subscription_count}", inline=True)
         e.add_field(name="Channels", value=f"{tc} text channels, {vc} voice channels & {cat} categories")
         e.set_footer(text=f"Owned by {str(guild.owner)}", icon_url=guild.owner.avatar_url)
@@ -143,7 +143,10 @@ class Info(commands.Cog):
         """
 
         role = role or ctx.author.top_role        
-        e = discord.Embed(description=f"{role.mention} - {len(role.members)}", colour=role.colour)
+        e = discord.Embed(
+            description=f"{role.mention} - {len(role.members)}",
+            colour=role.colour, timestamp=role.created_at
+        )
         e.set_author(name=ctx.guild.name, icon_url=ctx.guild.icon_url)
         e.add_field(name="ID", value=role.id)
         e.add_field(name="Colour", value=str(role.colour), inline=True)
@@ -151,7 +154,7 @@ class Info(commands.Cog):
         e.add_field(name="Managed", value=role.managed, inline=True)
         e.add_field(name="Mentionable", value=role.mentionable, inline=True)
         e.add_field(name="Hoisted", value=role.hoist, inline=True)
-        e.set_footer(text=f"Created@{role.created_at.strftime(self.bot.time_format)}")
+        e.set_footer(text=f"Created")
 
         await ctx.send(embed=e)
 
