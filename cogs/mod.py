@@ -153,7 +153,32 @@ class Mod(commands.Cog):
         if limit > 1000:
             return await ctx.send("1000 messages at most.")
 
-        predicates = await flags.get_predicate() if flags else [lambda m: True]
+        predicates = [lambda m: True]
+
+        if flags:
+            args = flags.args
+            if args.user:
+                user = [await MemberOrFetchedUser().convert(ctx, user) for user in args.user]
+                predicates.append(lambda m: m.author in user)
+            if args.contains:
+                predicates.append(lambda m: any(contain in m.content for contain in args.contains))
+            if args.bot:
+                predicates.append(lambda m: m.author.bot)
+            if args.everyone:
+                predicates.append(lambda m: m.mention_everyone)
+            if args.embed:
+                predicates.append(lambda m: bool(m.embeds))
+            if args.reaction_over:
+                predicates.append(lambda m: len(m.reactions) > args.reaction_over)
+            if args.mention_over:
+                predicates.append(lambda m: len(m.raw_mentions) > args.mention_over)
+            if args.regex:
+                if args.regex_ignorecase:
+                    pattern = re.compile(args.regex, re.IGNORECASE)
+                else:
+                    pattern = re.compile(args.regex)
+                predicates.append(lambda m: bool(pattern.search(m.content)))
+
         def check(msg):
             return all(predicate(msg) for predicate in predicates)
 

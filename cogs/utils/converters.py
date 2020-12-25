@@ -48,16 +48,6 @@ class MessageFlagParser:
     async def convert(cls, ctx, argument):
         return cls(ctx, argument)
         
-    def add_argument(self, *args, **kwargs):
-        self.parse.add_argument(*args, *kwargs)
-
-    def add_predicate(self, pred):
-        self.predicates.append(pred)
-
-    async def get_predicate(self):
-        await self._set_default_predicate()
-        return self.predicates
-
     def _add_default_arguments(self):
         parser = self.parser
 
@@ -70,33 +60,6 @@ class MessageFlagParser:
         parser.add_argument('-mo', '--mention-over', type=int)
         parser.add_argument('-r', '--regex')
         parser.add_argument('-ric', '--regex-ignorecase', action='store_true')
-
-    async def _set_default_predicate(self):
-        args = self.args
-        ctx = self.ctx
-
-        if args.user:
-            user = [await MemberOrFetchedUser().convert(ctx, user) for user in args.user]
-            self.predicates.append(lambda m: m.author in user)
-        if args.contains:
-            self.predicates.append(lambda m: any(contain in m.content for contain in args.contains))
-        if args.bot:
-            self.predicates.append(lambda m: m.author.bot)
-        if args.everyone:
-            self.predicates.append(lambda m: m.mention_everyone)
-        if args.embed:
-            self.predicates.append(lambda m: bool(m.embeds))
-        if args.reaction_over:
-            self.predicates.append(lambda m: len(m.reactions) > args.reaction_over)
-        if args.mention_over:
-            self.predicates.append(lambda m: len(m.raw_mentions) > args.mention_over)
-        if args.regex:
-            if args.regex_ignorecase:
-                pattern = re.compile(args.regex, re.IGNORECASE)
-            else:
-                pattern = re.compile(args.regex)
-
-            self.predicates.append(lambda m: bool(pattern.search(m.content)))
 
 
 class EmbedFlagParser:
