@@ -78,7 +78,7 @@ class Info(commands.Cog):
         shared = sum(g.get_member(user.id) is not None for g in self.bot.guilds)
         try:
             user_nick = user.nick
-            joined = user.joined_at.strftime(ctx.tformattime_format)
+            joined = user.joined_at.strftime(ctx.tformat)
             roles = ", ".join([role.mention for role in reversed(user.roles)])
         except AttributeError:
             joined, roles, user_nick = None, None, None
