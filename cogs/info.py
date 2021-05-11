@@ -17,7 +17,7 @@ class Info(commands.Cog):
     @commands.command(aliases=['hi'])
     async def hello(self, ctx):
         """Greets you."""
-        await ctx.send("Greetings.")
+        await ctx.send("Greetings! Euphyzr#5077 created me.")
 
     @commands.command(aliases=['pfp'])
     async def avatar(self, ctx, *, user: MemberOrFetchedUser = None):
@@ -38,7 +38,7 @@ class Info(commands.Cog):
 
         bot_user = self.bot.user
         source = "[sneaky source code](https://github.com/euphonicazure/SneakyNinja)"
-        owner = self.bot.get_user(self.bot.owner_id)
+        owner = self.bot.get_user(411506718187716610)
         py_ver = sys.version.split()[0]
         dpy_ver = discord.__version__
         dpy_logo = ('https://cdn.discordapp.com/attachments/336642776609456130/'
@@ -52,13 +52,16 @@ class Info(commands.Cog):
             title=bot_user.name, description=self.bot.description,
             colour=self.bot.colour, timestamp=ctx.timenow()
         )
-        e.set_author(name=str(owner), icon_url=owner.avatar_url)
+        e.set_author(name=f"{owner} | Creator", icon_url=owner.avatar_url)
         e.set_thumbnail(url=bot_user.avatar_url_as(static_format='png'))
         e.add_field(
             name="Statistics",
             value=f"members: {member_count}\nunique: {unique_member_count}\nguilds: {len(self.bot.guilds)}"
         )
-        e.add_field(name="Created at", value=bot_user.created_at.strftime(ctx.tformat))
+        e.add_field(
+            name="Created",
+            value=f"by **{owner}**\nat **{bot_user.created_at.strftime(ctx.tformat)}**"
+        )
         e.add_field(name="Source", value=source)
         e.set_footer(text=f"Python {py_ver} | discord.py {dpy_ver}", icon_url=dpy_logo)
 

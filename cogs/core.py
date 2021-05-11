@@ -100,7 +100,7 @@ class SneakyCore(commands.Cog):
         if isinstance(error, ignored_errs):
             return
         if isinstance(error, commands.CommandOnCooldown):
-            if ctx.message.author.id == ctx.bot.owner_id:
+            if ctx.message.author.id in ctx.bot.owner_ids:
                 # bot owner bypasses cooldowns
                 return await ctx.reinvoke()                
             await ctx.send(error)
