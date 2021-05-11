@@ -1,4 +1,3 @@
-import sys
 import logging
 import datetime
 import traceback
@@ -10,21 +9,11 @@ from discord.ext import commands
 import config
 from utils import context
 
-
-logging.getLogger('discord').setLevel(logging.INFO)
-log = logging.getLogger()
-fmt = logging.Formatter('|{asctime}|{levelname}|{name}: {message}', '%Y-%m-%d %I:%M:%S %p', style='{')
-sneakyhandler = logging.FileHandler(filename='logs/sneakyninja.log', encoding='utf-8')
-sneakyhandler.addFilter(lambda rec: not rec.name.split('.')[0] == 'discord')
-sneakyhandler.setFormatter(fmt)
-
-discordhandler = logging.FileHandler(filename='logs/discord.log', mode='w', encoding='utf-8')
-discordhandler.addFilter(lambda rec: rec.name.split('.')[0] == 'discord')
-discordhandler.setFormatter(fmt)
-
-log.addHandler(sneakyhandler)
-log.addHandler(discordhandler)
-
+discord_logger = logging.getLogger('discord')
+discord_logger.setLevel(logging.DEBUG)
+discord_handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='w')
+discord_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+discord_logger.addHandler(discord_handler)
 
 initial_extensions = (
     'cogs.info',
@@ -37,9 +26,9 @@ initial_extensions = (
 class SneakyNinja(commands.Bot):
     def __init__(self):
         super().__init__(
-            command_prefix=commands.when_mentioned_or('>>'), owner_id=config.owner_id,
+            command_prefix=commands.when_mentioned_or(config.prefix), owner_id=config.owner_id,
             description="Greetings, I can provide various info and of course, help you run server",
-            activity=discord.Activity(name='>>help', type=discord.ActivityType.listening),
+            activity=discord.Activity(name=f'{config.prefix}help', type=discord.ActivityType.listening),
             intents=discord.Intents(
                 guilds=True, members=True, messages=True,
                 voice_states=True, emojis=True, invites=True
