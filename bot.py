@@ -58,6 +58,7 @@ class SneakyNinja(commands.Bot):
     async def close(self):
         await super().close()
         await self.session.close()
+        await self.pool.close()
 
     async def global_cooldown_check(self, ctx):
         """Global Command Cooldown"""
@@ -80,6 +81,8 @@ class SneakyNinja(commands.Bot):
 
 
 if __name__ == '__main__':
+    import asyncio
+    import asyncpg
     import logging
     from pathlib import Path
 
@@ -93,4 +96,9 @@ if __name__ == '__main__':
     discord_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
     discord_logger.addHandler(discord_handler)
 
-    SneakyNinja().run(config.token)
+    loop = asyncio.get_event_loop()
+    pool = loop.run_until_complete(asyncpg.create_pool(config.postgresql))
+
+    bot = SneakyNinja()
+    bot.pool = pool
+    bot.run(config.token)

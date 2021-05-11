@@ -1,3 +1,4 @@
-discord.py
-wikipedia
-googletrans
+discord.py==1.5.1
+wikipedia==1.4.0
+googletrans==3.0.0
+asyncpg==0.22.0

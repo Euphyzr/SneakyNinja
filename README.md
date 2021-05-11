@@ -8,5 +8,6 @@ the following settings:
 token: str = "yourbot.token.here" 
 owner_ids: set[int] = {...}
 prefix: str = '...' 
+postgresql: str = 'postgresql://user:password@host/database' # use your db info
 ```
 You need Python and the dependencies in `requirements.txt` to run the bot.
