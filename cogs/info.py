@@ -4,7 +4,7 @@ from discord.ext import commands
 import sys
 import traceback
 
-from .utils.converters import MemberOrFetchedUser
+from utils.converters import MemberOrFetchedUser
 
 class Info(commands.Cog):
     """Discord information related commands."""

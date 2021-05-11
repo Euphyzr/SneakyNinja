@@ -1,10 +1,11 @@
 import discord
 from discord.ext import commands
 
+import re
 import traceback
 from typing import Union, Optional
 
-from .utils.converters import MemberOrFetchedUser, MessageFlagParser
+from utils.converters import MemberOrFetchedUser, MessageFlagParser
 
 
 class Mod(commands.Cog):

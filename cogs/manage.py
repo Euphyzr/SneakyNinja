@@ -1,7 +1,7 @@
 import discord
 from discord.ext import commands
 
-from .utils.converters import EmbedFlagParser
+from utils.converters import EmbedFlagParser
 
 
 class Manage(commands.Cog):

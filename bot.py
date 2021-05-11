@@ -8,7 +8,7 @@ import discord
 from discord.ext import commands
 
 import config
-from cogs.utils import context
+from utils import context
 
 
 logging.getLogger('discord').setLevel(logging.INFO)

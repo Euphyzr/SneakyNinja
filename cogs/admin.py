@@ -4,7 +4,7 @@ from discord.ext import commands
 import textwrap
 import traceback
 
-from .utils.converters import PyCodeBlock
+from utils.converters import PyCodeBlock
 
 class Admin(commands.Cog, command_attrs=dict(hidden=True)):
     """Owner only cog for dynamic bot management."""
