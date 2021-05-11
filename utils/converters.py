@@ -1,4 +1,3 @@
-import re
 import argparse, shlex
 
 import discord

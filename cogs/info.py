@@ -2,7 +2,6 @@ import discord
 from discord.ext import commands
 
 import sys
-import traceback
 
 from utils.converters import MemberOrFetchedUser
 

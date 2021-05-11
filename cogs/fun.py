@@ -4,7 +4,6 @@ from discord.ext import commands
 import random
 import textwrap
 
-import aiohttp
 import wikipedia
 import googletrans
 
