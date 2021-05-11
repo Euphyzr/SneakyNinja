@@ -1,4 +1,3 @@
-import logging
 import datetime
 import traceback
 
@@ -9,18 +8,12 @@ from discord.ext import commands
 import config
 from utils import context
 
-discord_logger = logging.getLogger('discord')
-discord_logger.setLevel(logging.DEBUG)
-discord_handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='w')
-discord_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
-discord_logger.addHandler(discord_handler)
-
 initial_extensions = (
     'cogs.info',
     'cogs.admin',
     'cogs.mod',
     'cogs.manage',
-    'cogs.fun'
+    'cogs.fun',
 )
 
 class SneakyNinja(commands.Bot):
@@ -85,5 +78,18 @@ class SneakyNinja(commands.Bot):
         await owner.send(msg, **kwargs)
 
 
-bot = SneakyNinja()
-bot.run(config.token)
+if __name__ == '__main__':
+    import logging
+    from pathlib import Path
+
+    p = Path('.') / 'logs'
+    if not p.exists():
+        p.mkdir()
+
+    discord_logger = logging.getLogger('discord')
+    discord_logger.setLevel(logging.DEBUG)
+    discord_handler = logging.FileHandler(filename='logs/discord.log', encoding='utf-8', mode='w')
+    discord_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
+    discord_logger.addHandler(discord_handler)
+
+    SneakyNinja().run(config.token)
