@@ -19,7 +19,7 @@ initial_extensions = (
 class SneakyNinja(commands.Bot):
     def __init__(self):
         super().__init__(
-            command_prefix=commands.when_mentioned_or(config.prefix), owner_id=config.owner_id,
+            command_prefix=commands.when_mentioned_or(config.prefix), owner_ids=config.owner_ids,
             description="Greetings, I can provide various info and of course, help you run server",
             activity=discord.Activity(name=f'{config.prefix}help', type=discord.ActivityType.listening),
             intents=discord.Intents(
@@ -74,8 +74,9 @@ class SneakyNinja(commands.Bot):
         return datetime.datetime.utcnow()
 
     async def send_owner(self, msg, **kwargs):
-        owner = self.get_user(self.owner_id)
-        await owner.send(msg, **kwargs)
+        for owner_id in self.owner_ids:
+            owner = self.get_user(owner_id) or self.fetch_user(owner_id)
+            await owner.send(msg, **kwargs)
 
 
 if __name__ == '__main__':

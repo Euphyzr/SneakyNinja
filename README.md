@@ -6,7 +6,7 @@ Create a `logs/` directory and `config.py` file in the root of this directory wi
 the following settings:
 ```py
 token: str = "yourbot.token.here" 
-owner_id: int = ...
+owner_ids: set[int] = {...}
 prefix: str = '...' 
 ```
 You need Python and the dependencies in `requirements.txt` to run the bot.
