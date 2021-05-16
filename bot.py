@@ -14,6 +14,7 @@ initial_extensions = (
     'cogs.mod',
     'cogs.manage',
     'cogs.fun',
+    'cogs.school',
 )
 
 class SneakyNinja(commands.Bot):
@@ -32,6 +33,7 @@ class SneakyNinja(commands.Bot):
         self.session = None
 
         # preferences
+        self.creator_id = 411506718187716610
         self.colour = discord.Colour(0x04f2a6)
         self.time_format = "%d %B, %Y; %I:%M %p"
 
@@ -84,6 +86,7 @@ if __name__ == '__main__':
     import asyncio
     import asyncpg
     import logging
+    import json
     from pathlib import Path
 
     p = Path('.') / 'logs'
@@ -96,8 +99,10 @@ if __name__ == '__main__':
     discord_handler.setFormatter(logging.Formatter('%(asctime)s:%(levelname)s:%(name)s: %(message)s'))
     discord_logger.addHandler(discord_handler)
 
+    async def init(conn):
+        await conn.set_type_codec('jsonb', encoder=json.dumps, decoder=json.loads, schema='pg_catalog', format='text')
     loop = asyncio.get_event_loop()
-    pool = loop.run_until_complete(asyncpg.create_pool(config.postgresql))
+    pool = loop.run_until_complete(asyncpg.create_pool(config.postgresql, init=init))
 
     bot = SneakyNinja()
     bot.pool = pool
