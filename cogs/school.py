@@ -22,6 +22,8 @@ from utils.misc import get_ordinal
 # }
 
 class School(commands.Cog):
+    """Commands for my class's discord server."""
+
     def __init__(self, bot):
         self.bot = bot
         self._message = None
@@ -104,10 +106,12 @@ class School(commands.Cog):
 
     @commands.group(invoke_without_command=True)
     async def routine(self, ctx):
+        """An auto updating daily routine of my class."""
         pass
 
     @routine.command(name='start')
     async def routine_start(self, ctx):
+        """Start the routine."""
         if self.set_routine.is_running():
             return await ctx.send(f"It's already running at:\n{self._message.jump_url}")
 
@@ -117,6 +121,7 @@ class School(commands.Cog):
 
     @routine.command(name='cancel')
     async def routine_cancel(self, ctx):
+        """Cancel the routine."""
         self.set_routine.cancel()
         self.config['should_run'] = False
         await self.update_dbconfig()
