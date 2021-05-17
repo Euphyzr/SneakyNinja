@@ -76,6 +76,11 @@ class School(commands.Cog):
             # tracking was initialed by user. So, starting again on bot restart.
             channel = await self.bot.fetch_channel(self.config['channel_id'])
             self._message = await channel.fetch_message(self.config['message_id'])
+    
+    @set_routine.after_loop
+    async def on_routine_cancel(self):
+        if self._message:
+            await self._message.edit(content='Auto-updating cancelled. `Bot offline/Cog unloaded`')
 
     async def _make_routine_embed(self, guild):
         today   = datetime.date.today()
@@ -122,12 +127,17 @@ class School(commands.Cog):
     @routine.command(name='cancel')
     async def routine_cancel(self, ctx):
         """Cancel the routine."""
+        # we don't want the after_loop coro to run when cancelling through the command
+        _coro = self.set_routine._after_loop
+        self.set_routine._after_loop = None
         self.set_routine.cancel()
+
         self.config['should_run'] = False
         await self.update_dbconfig()
         if self._message:
             await self._message.edit(content='Routine Cancelled.', embed=None)
 
+        self.set_routine._after_loop = _coro
 
 def setup(bot):
     bot.add_cog(School(bot))
