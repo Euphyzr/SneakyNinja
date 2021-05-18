@@ -20,6 +20,8 @@ class Fun(commands.Cog):
         
         In case of multiworded choices use quotes. E.g - choose "very good" bad.
         """
+        if not choices:
+            return await ctx.send("No choices provided.")
         await ctx.send(random.choice(choices))
     
     @commands.command(aliases=['randint'])
