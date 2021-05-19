@@ -111,10 +111,10 @@ class Fun(commands.Cog):
     @commands.command()
     async def reddit(self, ctx, subreddit):
         """Get 5 hot reddit posts from a subreddit."""
-        
-        url = f'https://www.reddit.com/r/{subreddit}/'
+
+        url = f"https://www.reddit.com/r/{subreddit.split('/')[-1]}/hot.json"
         params = {'limit': '5'}
-        async with ctx.session.get(url + 'hot.json', params=params) as resp:
+        async with ctx.session.get(url, params=params) as resp:
             if resp.status == 200:
                 respjs = await resp.json()
                 posts = respjs['data']['children']
@@ -146,9 +146,9 @@ class Fun(commands.Cog):
                     else:
                         normal['value'] += f"[{title}]({url}) {flair}" + "\n"
                 
-                if sticky:
+                if sticky['value']:
                     e['fields'].append(sticky)
-                if normal:
+                if normal['value']:
                     e['fields'].append(normal)
 
                 return await ctx.send(embed=discord.Embed.from_dict(e))
