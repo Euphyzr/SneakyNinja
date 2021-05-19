@@ -34,7 +34,11 @@ class School(commands.Cog):
         self.set_routine.cancel()
 
     async def cog_check(self, ctx):
-        return ctx.guild and ctx.guild.id == 761601641182920752    
+        return ctx.guild and ctx.guild.id == 761601641182920752
+
+    async def cog_command_error(self, ctx, error):
+        if type(error) == commands.CheckFailure:
+            await ctx.send('This command is unavailable for this guild.')
 
     async def load_config(self):
         async with self.bot.pool.acquire() as conn:

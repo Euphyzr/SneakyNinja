@@ -18,6 +18,7 @@ class Mod(commands.Cog):
     
     @commands.command()
     @commands.has_guild_permissions(kick_members=True)
+    @commands.bot_has_guild_permissions(kick_members=True)
     async def kick(self, ctx, member: discord.Member, *, reason=None):
         """kicks a member from the server.
 
@@ -29,6 +30,7 @@ class Mod(commands.Cog):
 
     @commands.command()
     @commands.has_guild_permissions(ban_members=True)
+    @commands.bot_has_guild_permissions(ban_members=True)
     async def ban(self, ctx, user: MemberOrFetchedUser, day: Optional[int] = 0, *, reason=None):
         """Bans a member or a user (by ID) from the server.
 
@@ -44,6 +46,7 @@ class Mod(commands.Cog):
 
     @commands.command()
     @commands.has_guild_permissions(ban_members=True)
+    @commands.bot_has_guild_permissions(ban_members=True) 
     async def unban(self, ctx, user, *, reason = None):
         """Unbans a user from the server.
 
@@ -63,6 +66,7 @@ class Mod(commands.Cog):
 
     @commands.command()
     @commands.has_guild_permissions(kick_members=True)
+    @commands.bot_has_guild_permissions(ban_members=True)
     async def softban(self, ctx, member: discord.Member, *, reason=None):
         """Ban and unbans a member immediately to delete their messages upto 7 days.
 
@@ -94,6 +98,7 @@ class Mod(commands.Cog):
 
     @_voice.command(name='mute')
     @commands.has_guild_permissions(mute_members=True)
+    @commands.bot_has_guild_permissions(mute_members=True)
     async def _voice_mute(self, ctx, targets: commands.Greedy[Union[discord.Member, discord.VoiceChannel]]):
         """Voice mutes multiple members.
         
@@ -104,6 +109,7 @@ class Mod(commands.Cog):
     
     @_voice.command(name='unmute')
     @commands.has_guild_permissions(mute_members=True)
+    @commands.bot_has_guild_permissions(mute_members=True)
     async def _voice_unmute(self, ctx, targets: commands.Greedy[Union[discord.Member, discord.VoiceChannel]]):
         """Voice unmutes multiple members.
         
@@ -114,6 +120,7 @@ class Mod(commands.Cog):
     
     @_voice.command(name='deaf')
     @commands.has_guild_permissions(deafen_members=True)
+    @commands.bot_has_guild_permissions(deafen_members=True)
     async def _voice_deaf(self, ctx, targets: commands.Greedy[Union[discord.Member, discord.VoiceChannel]]):
         """Voice deafens multiple members.
         
@@ -124,6 +131,7 @@ class Mod(commands.Cog):
 
     @_voice.command(name='undeaf')
     @commands.has_guild_permissions(deafen_members=True)
+    @commands.bot_has_guild_permissions(deafen_members=True)
     async def _voice_undeaf(self, ctx, targets: commands.Greedy[Union[discord.Member, discord.VoiceChannel]]):
         """Voice undeafens multiple members.
         
@@ -134,6 +142,7 @@ class Mod(commands.Cog):
 
     @commands.command(name='purge')
     @commands.has_guild_permissions(manage_messages=True)
+    @commands.bot_has_guild_permissions(manage_messages=True)
     async def msg_purge(self, ctx, limit: int, *, flags: MessageFlagParser = None):
         """Purge messages with handy options.
         

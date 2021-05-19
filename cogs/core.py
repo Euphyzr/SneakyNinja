@@ -93,18 +93,33 @@ class SneakyCore(commands.Cog):
 
         # unwrapping commands.CommandInvokeError
         error = getattr(error, 'original', error)
-        ignored_errs = (commands.CommandNotFound, commands.CheckFailure)
-        send_errs = (commands.BadArgument, commands.MissingPermissions, discord.NotFound,
-                    discord.Forbidden, discord.HTTPException, commands.MissingRequiredArgument)
+        ignored = (
+            commands.CommandNotFound,
+        )
+        parent_ignored = {
+            commands.CheckFailure,
+        }
+        sendable = (
+            commands.BadArgument,
+            commands.MissingPermissions,
+            commands.BotMissingPermissions,
+            discord.NotFound,
+            discord.Forbidden,
+            discord.HTTPException,
+            commands.MissingRequiredArgument,
+        )
 
-        if isinstance(error, ignored_errs):
+        if isinstance(error, ignored):
+            return
+        if type(error) in parent_ignored:
+            # only parent should be ignored, not its subclasses
             return
         if isinstance(error, commands.CommandOnCooldown):
             if ctx.message.author.id in ctx.bot.owner_ids:
                 # bot owner bypasses cooldowns
                 return await ctx.reinvoke()                
             await ctx.send(error)
-        elif isinstance(error, send_errs):
+        elif isinstance(error, sendable):
             error = getattr(error, 'text', error)
             await ctx.send(error)
         else:
