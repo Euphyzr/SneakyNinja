@@ -106,21 +106,22 @@ class SneakyCore(commands.Cog):
             discord.NotFound,
             discord.Forbidden,
             discord.HTTPException,
-            commands.MissingRequiredArgument,
         )
 
         if isinstance(error, ignored):
             return
-        if type(error) in parent_ignored:
+        elif type(error) in parent_ignored:
             # only parent should be ignored, not its subclasses
             return
-        if isinstance(error, commands.CommandOnCooldown):
+        elif isinstance(error, sendable):
+            error = getattr(error, 'text', error)
+            await ctx.send(error)
+        elif isinstance(error, commands.MissingRequiredArgument):
+            await ctx.send(f"Please, provide a **`{error.param.name}`** for this command.")
+        elif isinstance(error, commands.CommandOnCooldown):
             if ctx.message.author.id in ctx.bot.owner_ids:
                 # bot owner bypasses cooldowns
                 return await ctx.reinvoke()                
-            await ctx.send(error)
-        elif isinstance(error, sendable):
-            error = getattr(error, 'text', error)
             await ctx.send(error)
         else:
             print(f"Ignoring exception in command {ctx.command}:")
