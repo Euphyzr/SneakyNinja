@@ -15,6 +15,7 @@ initial_extensions = (
     'cogs.manage',
     'cogs.fun',
     'cogs.school',
+    'cogs.utilities',
 )
 
 class SneakyNinja(commands.Bot):

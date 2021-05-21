@@ -15,7 +15,7 @@ async def sql_setup():
         for schema in SCHEMAS:
             # asyncio.create_task (in background) => can't perform operation while another's in progress
             # asyncio.gather => RuntimeError: task got bad yield
-            await conn.execute(schema)
+            print(await conn.execute(schema))
 
 
 if __name__ == '__main__':

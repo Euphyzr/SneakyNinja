@@ -2,17 +2,12 @@ import discord
 from discord.ext import commands
 
 import random
-import textwrap
-
-import wikipedia
-import googletrans
 
 class Fun(commands.Cog):
-    """Fun and some utility related commands."""
+    """Fun commands."""
 
     def __init__(self, bot):
         self.bot = bot
-        self.translator = googletrans.Translator() 
     
     @commands.command()
     async def choose(self, ctx, *choices: commands.clean_content):
@@ -41,72 +36,6 @@ class Fun(commands.Cog):
                 e.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
                 return await ctx.send(embed=e)
             return await ctx.send("The cat escaped.")
-
-    @commands.command(name='wikipedia', aliases=['wiki'])
-    async def wikisummary(self, ctx, *, topic):
-        """Get summary of any wikipedia page."""
-        wiki_icon = "https://upload.wikimedia.org/wikipedia/commons/6/6e/Wikipedia_logo_silver.png"
-        em = discord.Embed(colour=0xF9F0F0)
-        em.set_author(name="wikipedia", icon_url=wiki_icon)
-        em.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-
-        try:
-            page = await self.bot.loop.run_in_executor(None, wikipedia.page, topic)
-        except wikipedia.DisambiguationError as e:
-            em.title = "Disambiguation"
-            em.description = "\n".join(e.options[:5])
-            return await ctx.send(embed=em)
-        except Exception as e:
-            return await ctx.send(e)
-
-        placeholder = f"... [Continue]({page.url})"
-        summary = textwrap.shorten(page.summary, width=1024, placeholder=placeholder)
-        images = list(filter(lambda i: i.endswith((".jpg", ".JPG", ".png", ".PNG")), page.images))
-        em.title, em.url = page.title, page.url
-        em.add_field(name="Summary", value=summary)
-        if images:
-            em.set_thumbnail(url=images[0])
-        await ctx.send(embed=em)
-
-    async def _generate_translated_embed(self, ctx, translated):
-        e = discord.Embed(colour=discord.Colour.blue())
-        icon_url = (
-            "https://upload.wikimedia.org/wikipedia/commons/thumb/d/d7/Google_Translate_logo.svg/"
-            "1200px-Google_Translate_logo.svg.png"
-        )
-        e.set_author(name="Translator", icon_url=icon_url)
-        e.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
-
-        src = googletrans.LANGUAGES.get(translated.src, 'Auto-Detected').title()
-        dest = googletrans.LANGUAGES.get(translated.dest, 'English').title()
-        e.add_field(name=f"From {src}", value=translated.origin)
-        e.add_field(name=f"To {dest}", value=translated.text)
-
-        return e
-
-    @commands.command(aliases=['tl'])
-    async def translate(self, ctx, *, text: commands.clean_content):
-        """Auto-detects and translates the provided text to English."""
-        try:
-            translated = await self.bot.loop.run_in_executor(None, self.translator.translate, text)
-        except Exception as e:
-            return await ctx.send(e)
-
-        e = await self._generate_translated_embed(ctx, translated)
-        await ctx.send(embed=e)
-
-    @commands.command(aliases=['tlto', 'tl2'])
-    async def translateto(self, ctx, dest, *, text):
-        """Auto-detects and translates the provided text to another Language."""
-        try:
-            translated = await self.bot.loop.run_in_executor(None, self.translator.translate, text, dest)
-        except ValueError:
-            return await ctx.send("Not a valid destination language.")
-        except Exception as e:
-            return await ctx.send(e)
-
-        e = await self._generate_translated_embed(ctx, translated)
-        await ctx.send(embed=e)
 
     @commands.command()
     async def reddit(self, ctx, subreddit):
@@ -152,8 +81,57 @@ class Fun(commands.Cog):
                     e['fields'].append(normal)
 
                 return await ctx.send(embed=discord.Embed.from_dict(e))
-            await ctx.send("Couldn't get the subreddit posts")     
+            await ctx.send("Sorry, couldn't get the subreddit posts.")
 
- 
+    @commands.command()
+    async def coffee(self, ctx):
+        async with ctx.session.get("https://coffee.alexflipnote.dev/random.json") as resp:
+            if resp.status == 200:
+                respjs = await resp.json()
+                e = discord.Embed(title='A coffee for you!', colour=ctx.author.colour or self.bot.colour)
+                e.set_image(url=respjs['file'])
+                e.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+                return await ctx.send(embed=e)
+            return await ctx.send("No Coffee today.")
+
+    @commands.command()
+    async def facts(self, ctx):
+        async with ctx.session.get("https://nekos.life/api/v2/fact") as resp:
+            if resp.status == 200:
+                respjs = await resp.json()
+                e = discord.Embed(
+                    title='Facts', description=respjs['fact'],
+                    colour=ctx.author.colour or self.bot.colour
+                )
+                e.set_footer(text=f"Requested by {ctx.author}", icon_url=ctx.author.avatar_url)
+                return await ctx.send(embed=e)
+            return await ctx.send("No facts today.")
+
+    @commands.command()
+    async def asciify(self, ctx, *, text):
+        url, params = "https://artii.herokuapp.com/make", {'text': text}
+        async with ctx.session.get(url, params=params) as resp:
+            if resp.status == 200:
+                resp_txt = await resp.text()
+                return await ctx.send(f"```{resp_txt}```")
+            return await ctx.send("Sorry, couldn't get the ASCII.")
+
+    @commands.command()
+    async def quote(self, ctx):
+        payload = {'method': 'getQuote', 'format': 'json', 'lang': 'en'}
+        async with ctx.session.post("http://api.forismatic.com/api/1.0/", data=payload) as resp:
+            if resp.status == 200:
+                respjs = await resp.json()
+                e = discord.Embed(
+                    title='Random Quote',
+                    url=respjs['quoteLink'],
+                    description=respjs['quoteText'],
+                    colour=ctx.author.colour or self.bot.colour,
+                )
+                e.set_footer(text=f"ー {respjs['quoteAuthor'] or 'unknown'} | Requested by {ctx.author}")
+                return await ctx.send(embed=e)
+            return await ctx.send("Sorry, couldn't get any quotes.")
+
+
 def setup(bot):
     bot.add_cog(Fun(bot))
