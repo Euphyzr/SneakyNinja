@@ -12,3 +12,6 @@ class Context(commands.Context):
 
     async def send_owner(self, msg, **kwargs):
         await self.bot.send_owner(msg, **kwargs)
+
+    async def webhook_log(self, *args, **kwargs):
+        await self.bot.webhook_log(*args, **kwargs)

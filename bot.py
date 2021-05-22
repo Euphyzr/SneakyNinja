@@ -31,7 +31,11 @@ class SneakyNinja(commands.Bot):
         )
         
         # utils
-        self.session = None
+        self.session = aiohttp.ClientSession(loop=self.loop)
+        self.webhook = discord.Webhook.from_url(
+            config.webhook_url,
+            adapter=discord.AsyncWebhookAdapter(session=self.session)
+        )
 
         # preferences
         self.creator_id = 411506718187716610
@@ -52,7 +56,6 @@ class SneakyNinja(commands.Bot):
 
 
     async def on_ready(self):
-        self.session = aiohttp.ClientSession(loop=self.loop)
         print(f"Logged in:\n{self.user.name} - {self.user.id}")
 
     async def get_context(self, message, *, cls=context.Context):
@@ -82,6 +85,11 @@ class SneakyNinja(commands.Bot):
             owner = self.get_user(owner_id) or self.fetch_user(owner_id)
             await owner.send(msg, **kwargs)
 
+    async def webhook_log(self, *args, **kwargs):
+        avatar_url = kwargs.pop('avatar_url', self.user.avatar_url)
+        username = kwargs.pop('username', str(self.user.name)) + kwargs.pop('username_plus', '')
+
+        await self.webhook.send(*args, **kwargs, username=username, avatar_url=avatar_url)
 
 if __name__ == '__main__':
     import asyncio

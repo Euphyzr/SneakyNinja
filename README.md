@@ -9,6 +9,7 @@ token: str = "yourbot.token.here"
 owner_ids: set[int] = {...}
 prefix: str = '...' 
 postgresql: str = 'postgresql://user:password@host/database' # use your db info
+webhook_url: str = "https://discord.com/api/webhooks/<id>/<token>"
 ```
 3. Setup database tables with `python3 manage.py --setup-db`.
 4. Insert the cog configurations in table `cog_config` according the schemas in the cog files.

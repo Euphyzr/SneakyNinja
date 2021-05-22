@@ -3,7 +3,6 @@ from discord.ext import commands
 
 import traceback
 
-
 class SneakyHelp(commands.HelpCommand):
     """SneakyNinja's help command implementation.""" 
 
@@ -124,8 +123,21 @@ class SneakyCore(commands.Cog):
                 return await ctx.reinvoke()                
             await ctx.send(error)
         else:
-            print(f"Ignoring exception in command {ctx.command}:")
-            traceback.print_exception(type(error), error, error.__traceback__)
+            tb = "".join(traceback.format_exception(type(error), error, error.__traceback__))
+            embed = discord.Embed(
+                title=f"Ignoring Exception in `{ctx.cog.qualified_name}`.`{ctx.command}`...",
+                description=f"```py\n{tb}```",
+                colour=discord.Colour.red(),
+                timestamp=ctx.timenow(),
+            )
+            embed.set_author(name=ctx.author, icon_url=ctx.author.avatar_url)
+            embed.set_footer(text=ctx.guild, icon_url=ctx.guild.icon_url)
+
+            embed.add_field(name='Author', value=f"{ctx.author}\n[{ctx.author.id}]")
+            embed.add_field(name='Guild', value=f"{ctx.guild}\n[{ctx.guild.id}]")
+            embed.add_field(name='Channel', value=f"{ctx.channel}\n[{ctx.channel.id}]")
+
+            await ctx.webhook_log(embed=embed, username_plus=" [Error]")
 
 
 def setup(bot):
