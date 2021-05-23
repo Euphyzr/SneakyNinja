@@ -143,5 +143,11 @@ class School(commands.Cog):
 
         self.set_routine._after_loop = _coro
 
+    @routine.command(name='restart')
+    async def routine_restart(self, ctx):
+        """Restart the routine."""
+        self.set_routine.restart()
+        await ctx.send("Restarted the routine.")
+
 def setup(bot):
     bot.add_cog(School(bot))
